@@ -30,7 +30,7 @@ difference_map_file = None
 calculated_map_file = None
   .type = path
   .help = "Path to a calculated map to use directly (if not calculating one)."
-experiment = *electron xray
+experiment = *electron xray neutron
   .type = choice
   .help = "Type of experiment (dictating the scattering table to use for the"
   .help = "calculated map)"
@@ -77,6 +77,7 @@ def run(args):
   model_in = file_reader.any_file(params.model_file, force_type="pdb")
   model_in.check_file_type("pdb")
   hier_model = model_in.file_object.construct_hierarchy()
+  # TODO: use map_model_manager instead
   # TODO: probably want to add hydrogens if not present
   # process the map(s)
   def get_mtz_file_object(mtz_path):
@@ -87,7 +88,15 @@ def run(args):
     map_in = file_reader.any_file(map_path, force_type="ccp4_map")
     map_in.check_file_type("ccp4_map")
     return map_in.file_object
-  # TODO: do stuff
+  # TODO: use map_model_manager for the maps as well
+  # TODO: get a matching fmodel for each experiment type
+  # WISHLIST: fmodel by local resolution in the matching map
+  # TODO: calculate a difference map for each experimental and fmodel pair
+  # TODO: make sure everything makes it into the map_model_manager with accurate
+  # and informative labels
+  # TODO: run it
+  # TODO: write discoveries to file
+  # TODO: write Coot script to look through discoveries, labeled appropriately
   print "Analysis complete!"
 
 if __name__=="__main__":
