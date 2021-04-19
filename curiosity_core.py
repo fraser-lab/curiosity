@@ -20,22 +20,18 @@ class Expedition(object):
 
   def inventory_maps(self):
     """Take an inventory of the types of maps available in the map_model_manager."""
-    self.maps = {'expt':{}, 'diff':{}, 'fmodel':{}}
-    self.experiments = []
-    map_managers = self.mmm.map_managers()
-    for mm in map_managers:
-      etype = mm.experiment_type()
-      if etype not in experiments:
-        experiments.append(etype)
-      if 'expt' in mm.labels:
-        self.maps['expt'][etype] = mm
-        continue
-      if 'diff' in mm.labels:
-        self.maps['diff'][etype] = mm
-        continue
-      if 'fmodel' in mm.labels:
-        mm.set_experiment_type('fmodel')
-        self.maps['fmodel']['fmodel'] = mm
+    self.maps = {}
+    map_ids = self.mmm.map_id_list()
+    for label in map_ids:
+      if label == 'map_manager': continue
+      etype, map_type = label.split("_")
+      if etype not in self.maps.keys():
+        self.maps[etype] = {}
+      self.maps[etype][map_type] = mmm.get_map_manager_by_id(label)
+
+  def experiments(self):
+    """Return all available experiment types."""
+    return self.maps.keys()
 
   def inventory_probes(self):
     """Check what tests we can run on this expedition."""
@@ -45,12 +41,14 @@ class Expedition(object):
       if probe.validate_expedition():
         self.probes.append(probe)
 
-  def add_map(self, newmap, tag):
+  def add_map(self, mm, expt_type, map_type):
     """Update the map_model_manager with an additional map_manager."""
-    self.mmm.add_map_manager_by_id(newmap, tag)
+    mm.labels = [map_type]
+    self.mmm.add_map_manager_by_id(mm, "_".join([expt_type, map_type]))
     # if we want to be able to add a map from file, we will need to
     # construct a map manager for it before passing it in
     self.inventory_maps()
+    self.inventory_probes()
 
   def walk(self):
     """Traverse the model to access each residue. Heavily borrowing from qPTxM."""
