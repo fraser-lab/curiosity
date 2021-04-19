@@ -41,33 +41,30 @@ class MapModelCC(Probe):
   should not be used directly -- use a subclass where validate_expedition and
   probe_at_residue are defined."""
   def probe_at_residue_by_expt(self, residue, structure_type, expt_type, map_type):
-    mm = self.expedition.maps[map_type][expt_type]
+    mm = self.expedition.maps[expt_type][map_type]
     # get mask around residue
-    fmodel_mm = self.expedition.maps['fmodel']['fmodel']
+    fmodel_mm = self.expedition.maps[expt_type]['fmodel']
     cc = self.expedition.mmm.map_map_cc(mm, fmodel_mm, mask)
     return cc
+  def validate_expedition(self):
+    if not expt_type in self.expedition.experiments() \
+      or not 'expt' in self.expedition.maps[expt_type] \
+      or not 'fmodel' in self.expedition.maps[expt_type]:
+      return False
+    return True
 
 class CryoMapModelCC(MapModelCC):
   """MapModelCC for cryoEM maps"""
-  def validate_expedition(self):
-    return 'cryo_em' in self.expedition.maps['expt'] and \
-      'fmodel' in self.expedition.maps['fmodel']
   def probe_at_residue(self, residue, structure_type):
-    self.parent.probe_at_residue_by_expt(self, residue, structure_type, 'cryo_em', 'expt')
+    self.parent.probe_at_residue_by_expt(self, residue, structure_type, 'electron', 'expt')
 
 class XrayMapModelCC(MapModelCC):
   """MapModelCC for X-ray maps"""
-  def validate_expedition(self):
-    return 'x_ray' in self.expedition.maps['expt'] and \
-      'fmodel' in self.expedition.maps['fmodel']
   def probe_at_residue(self, residue, structure_type):
-    self.parent.probe_at_residue_by_expt(self, residue, structure_type, 'x_ray', 'expt')
+    self.parent.probe_at_residue_by_expt(self, residue, structure_type, 'xray', 'expt')
 
 class NeutronMapModelCC(MapModelCC):
   """MapModelCC for neutron maps"""
-  def validate_expedition(self):
-    return 'neutron' in self.expedition.maps['expt'] and \
-      'fmodel' in self.expedition.maps['fmodel']
   def probe_at_residue(self, residue, structure_type):
     self.parent.probe_at_residue_by_expt(self, residue, structure_type, 'neutron', 'expt')
 
