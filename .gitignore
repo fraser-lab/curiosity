@@ -1,1 +1,9 @@
 _*
+test_neutron/*
+tmp/*
+test/*
+.DS_*
+*.pyc
+*.out
+*checkpoint.tar.gz
+curiosity.code-workspace
