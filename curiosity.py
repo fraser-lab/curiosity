@@ -156,7 +156,7 @@ def run(args):
   # FIXME: for testing purposes, apply ALL discoveries
   # curiosity_expedition.apply_selected_discoveries(curiosity_expedition.discoveries)
   # print("Applied all discovered modifications to model.")
-  import pdb; pdb.set_trace()
+  # import pdb; pdb.set_trace()
   print ("Analysis complete!")
 
 if __name__=="__main__":

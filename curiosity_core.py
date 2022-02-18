@@ -3,7 +3,7 @@ from scitbx.array_family import flex
 # from iotbx.data_manager import DataManager
 from mmtbx.masks import manager as masks_manager
 from mmtbx.f_model import manager as fmodel_manager
-from probes import probe_collection
+from load_probes import probe_collection
 import time
 
 # Curiosity: a tool for exploring electron density or eletrostatic potential maps.
