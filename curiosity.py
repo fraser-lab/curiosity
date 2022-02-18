@@ -47,7 +47,20 @@ d_min = 3
 
 master_phil = libtbx.phil.parse(master_phil_str)
 
-helpstr = """
+helpstr = """Curiosity: a tool for exploring crystallographic and cryoEM maps.
+
+My job is to look over your model and find things nearby that aren't modeled
+yet, or maybe are modeled wrong. I use the model to look at what's already
+there but mainly my analysis is of the map itself. I hope you find me useful!
+
+Some suggestions for best results:
+- Big maps == big memory requirements. Especially for EM maps, please run
+  phenix.map_box first. Some things won't run at all without this step.
+- For finding ions: run phenix.douse before curiosity to make sure you have
+  a full set of water candidates to start from. You can choose to set
+  keep_input_water=True if you want to preserve positions you've already
+  modeled or refined.
+
 Available parameters:
 """ + master_phil_str
 # TODO: useful helpstring
@@ -71,7 +84,7 @@ def validate_params(params):
 def run(args):
   if not args or "-h" in args or "--help" in args:
     raise Usage(helpstr)
-  from iotbx import file_reader
+  # from iotbx import file_reader
   import iotbx.phil
   # import phenix_util
   cmdline = iotbx.phil.process_command_line_with_files(

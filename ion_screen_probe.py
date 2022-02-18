@@ -1,4 +1,5 @@
 from probe_core import Probe
+from iotbx.pdb import common_residue_names_water as WATER_RES_NAMES
 from libtbx import easy_pickle
 from scitbx.array_family import flex
 from scitbx import matrix
