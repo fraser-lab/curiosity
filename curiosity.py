@@ -62,8 +62,8 @@ def validate_params(params):
   #   raise Sorry("Please supply either structure factors (.mtz) or calculated and difference map files (.map, .mrc or .ccp4).")
   # if not params.mtz_file:
   #   raise Sorry("Please supply an mtz with f_obs.")
-  # if (not params.difference_map_file or not params.calculated_map_file):
-  #   raise NotImplementedError("Generation of fmodel and difference maps not yet implemented. Please supply both maps.")
+  if (not params.difference_map_file or not params.calculated_map_file):
+    raise NotImplementedError("Generation of fmodel and difference maps not yet implemented. Please supply both maps.")
   if params.d_min is None:
     raise Sorry("Please supply an estimated global resolution d_min in Angstroms.")
   print ("Finished validating parameters at {timestr}".format(timestr=time.asctime()))
