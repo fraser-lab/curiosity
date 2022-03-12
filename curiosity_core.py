@@ -144,7 +144,8 @@ class Expedition(object):
     print ("Began main analysis (walk function) at {timestr}".format(timestr=time.asctime()))
     for chain in self.hier.chains():
       chain_id = chain.id.strip()
-      self.discoveries[chain_id] = []
+      if chain_id not in self.discoveries.keys():
+        self.discoveries[chain_id] = []
       struct_type = "protein" if chain.is_protein() else "na" # nucleic acid
       # TODO: get rid of struct_type once we have a mechanism for determining
       # it from the resiud object itself (lookup tables)
