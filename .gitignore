@@ -7,3 +7,6 @@ test/*
 *.out
 *checkpoint.tar.gz
 curiosity.code-workspace
+.vscode/
+ml/testing/*
+coot_stuff/*
