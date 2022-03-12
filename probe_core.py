@@ -1,6 +1,5 @@
 # from cctbx import geometry_restraints
 from libtbx.phil import parse
-from iotbx.pdb import common_residue_names_water as WATER_RES_NAMES
 
 class Probe(object):
   """Scaffold what it means to probe a map at a residue depending on what we're
