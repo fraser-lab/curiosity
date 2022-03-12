@@ -5,6 +5,7 @@ from scitbx.array_family import flex
 from scitbx import matrix
 import numpy as np
 import time
+import os
 
 class AmIAnIon(Probe):
   """Determine if a water might be better modeled as an ion. Initialize once per
@@ -98,10 +99,11 @@ class AmIAnIonML(AmIAnIon):
     #     self.waters_y.append(position[1])
     #     self.waters_z.append(position[2])
     self.map_manager = self.expedition.maps[self.experiment_type]['expt']
-    self.classifier = easy_pickle.load("mlp_classifier.pkl")
+    here = os.path.abspath(os.path.dirname(__file__))
+    self.classifier = easy_pickle.load(os.path.join(here, "ml", "ion_detector.pkl"))
+    self.lookup = easy_pickle.load(os.path.join(here, "ml", "ion_lookup.pkl"))
     # TODO for classifier:
     # - full path to pkl
-    # - label file appropriately (e.g. classifier_waters_and_ions)
     # - bundle release 0.1 and give it a zenodo doi
     # - update README to make clear this needs to run with py3
     print ("... completed probe setup at {timestr}".format(timestr=time.asctime()))

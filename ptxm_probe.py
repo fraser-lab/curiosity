@@ -5,6 +5,7 @@ from scitbx import matrix
 from libtbx.utils import Sorry
 import numpy as np
 import time
+import os
 
 modifs_on_A = ["A", "MA6", "6MZ", "2MA", "A2M", "2M8"]
 modifs_on_DA = ["DA"]
@@ -56,14 +57,15 @@ class IsModifiedNucleotide(Probe):
 
   def setup_manager(self):
     self.map_manager = self.expedition.maps[self.experiment_type]['expt']
-    self.classifier_A = easy_pickle.load("/Users/iris/projects/curiosity/ml/modif_detector_A.pkl")
-    self.classifier_U = easy_pickle.load("/Users/iris/projects/curiosity/ml/modif_detector_U.pkl")
-    self.classifier_C = easy_pickle.load("/Users/iris/projects/curiosity/ml/modif_detector_C.pkl")
-    self.classifier_G = easy_pickle.load("/Users/iris/projects/curiosity/ml/modif_detector_G.pkl")
-    self.lookup_A = easy_pickle.load("/Users/iris/projects/curiosity/ml/lookup_A.pkl")
-    self.lookup_U = easy_pickle.load("/Users/iris/projects/curiosity/ml/lookup_U.pkl")
-    self.lookup_C = easy_pickle.load("/Users/iris/projects/curiosity/ml/lookup_C.pkl")
-    self.lookup_G = easy_pickle.load("/Users/iris/projects/curiosity/ml/lookup_G.pkl")
+    here = os.path.abspath(os.path.dirname(__file__))
+    self.classifier_A = easy_pickle.load(os.path.join(here, "ml", "modif_detector_A.pkl"))
+    self.classifier_U = easy_pickle.load(os.path.join(here, "ml", "modif_detector_U.pkl"))
+    self.classifier_C = easy_pickle.load(os.path.join(here, "ml", "modif_detector_C.pkl"))
+    self.classifier_G = easy_pickle.load(os.path.join(here, "ml", "modif_detector_G.pkl"))
+    self.lookup_A = easy_pickle.load(os.path.join(here, "ml", "lookup_A.pkl"))
+    self.lookup_U = easy_pickle.load(os.path.join(here, "ml", "lookup_U.pkl"))
+    self.lookup_C = easy_pickle.load(os.path.join(here, "ml", "lookup_C.pkl"))
+    self.lookup_G = easy_pickle.load(os.path.join(here, "ml", "lookup_G.pkl"))
     print ("... completed probe setup at {timestr}".format(timestr=time.asctime()))
 
   def get_type_and_origin_and_basis_set_nucleobase(self, residue, resname):
