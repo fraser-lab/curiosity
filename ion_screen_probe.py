@@ -74,9 +74,7 @@ class AmIAnIonML(AmIAnIon):
     self.experiment_type = None
     self.applicable_structure_types = None # allow all
     metals = ["Mg", "MG", "Fe", "FE", "Fe2", "FE2", "Fe3", "FE3", "Zn", "ZN", "Zn2", "ZN2"]
-    metal_elements = ["MG", "FE", "ZN", "CU"]
-    ID_mappings = [(0, 'HOH'), (1, 'MG'), (2, 'ZN'), (3, 'FE')]
-    self.ID_key = [id[1] for id in ID_mappings]
+    metal_elements = ["MG", "FE", "ZN"]
     self.applicable_residue_list = WATER_RES_NAMES + metals
     self.applicable_coordination_partners = ["O", "N", "S"] + metal_elements
       # also check ions to see if they are ions, so we won't have to rename them as
@@ -184,7 +182,7 @@ class AmIAnIonML(AmIAnIon):
       print ("... probed one water at {timestr}".format(timestr=time.asctime()))
       return ("density grid at water: " + " ".join(printable) + "\n")
     else:
-      choice = self.ID_key[self.classifier.predict(np.asarray(density_grid).reshape(1,-1))[0]]
+      choice = self.lookup[self.classifier.predict(np.asarray(density_grid).reshape(1,-1))[0]]
       print ("... probed one water at {timestr}".format(timestr=time.asctime()))
       if choice.upper() != resname.upper():
         return (choice)
