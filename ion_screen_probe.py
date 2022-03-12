@@ -83,21 +83,6 @@ class AmIAnIonML(AmIAnIon):
     self.water_and_ion_names = set([item.lower() for item in self.applicable_residue_list])
 
   def setup_manager(self):
-    # no manager at this time -- use gridded atoms to locate neighbors
-    # # prepare an array of all water positions in the entire model
-    # self.waters_x = flex.double()
-    # self.waters_y = flex.double()
-    # self.waters_z = flex.double()
-    # for chain in self.expedition.hier.chains():
-    #   for residue in chain.residue_groups():
-    #     resname = residue.unique_resnames()[0].strip()
-    #     if not resname.lower() in self.water_and_ion_names: continue
-    #     oxygens = [atom for atom in residue.atoms() if atom.name.strip() == "O"]
-    #     if not len(oxygens) == 1: continue
-    #     position = oxygens[0].xyz
-    #     self.waters_x.append(position[0])
-    #     self.waters_y.append(position[1])
-    #     self.waters_z.append(position[2])
     self.map_manager = self.expedition.maps[self.experiment_type]['expt']
     here = os.path.abspath(os.path.dirname(__file__))
     self.classifier = easy_pickle.load(os.path.join(here, "ml", "ion_detector.pkl"))
@@ -109,25 +94,6 @@ class AmIAnIonML(AmIAnIon):
     print ("... completed probe setup at {timestr}".format(timestr=time.asctime()))
 
   def get_basis_set(self, position, radius=3):
-    # x,y,z = position
-    # diffx = self.waters_x - x
-    # diffy = self.waters_y - y
-    # diffz = self.waters_z - z
-    # nearby = diffx < radius and diffx > -1*radius and \
-    #          diffy < radius and diffy > -1*radius and \
-    #          diffz < radius and diffz > -1*radius
-    #          # selects in a cube, not a sphere, for computational efficiency
-    #          # also, using flex doubles instead of vec3_doubles at this stage
-    #          # so that we can use overloaded vectorized operators on them
-    # nearx = self.waters_x.select(nearby)
-    # neary = self.waters_y.select(nearby)
-    # nearz = self.waters_z.select(nearby)
-    # diffx = diffx.select(nearby)
-    # diffy = diffy.select(nearby)
-    # diffz = diffz.select(nearby)
-    # sq_dists = (diffx*diffx + diffy*diffy + diffz*diffz)
-    # order = [list(sq_dists).index(d) for d in sorted(sq_dists)]
-    # sorted_positions = flex.vec3_double([(nearx[i],neary[i],nearz[i]) for i in order if sq_dists[i] <= radius**2])
     neighboring_atoms = self.expedition.locate_neighbors(position)
     coordinating_positions = [matrix.col(n.xyz) for n in neighboring_atoms \
       if n.element.upper() in self.applicable_coordination_partners]
