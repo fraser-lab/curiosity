@@ -20,6 +20,11 @@ class Expedition(object):
     # self.fmodel = fmodel
     self.params = params
     self.discoveries = {}
+    self.n_tested = 0
+    self.n_true_positives = {}
+    self.n_true_negatives = {}
+    self.n_false_positives = {}
+    self.n_false_negatives = {}
     self.model = self.mmm.model()
     self.hier = self.model.get_hierarchy()
     print ("... constructed model hierarchy at {timestr}".format(timestr=time.asctime()))
@@ -158,6 +163,7 @@ class Expedition(object):
         resname = residue.unique_resnames()[0].strip()
         print ([a.i_seq for a in residue.atoms()])
         result_list = self.step(residue, chain_id, resid, resname, struct_type)
+        self.n_tested += 1
         print ("... completed one step at {timestr}".format(timestr=time.asctime()))
         if result_list:
           self.discoveries[chain_id].append((residue, result_list))
@@ -171,6 +177,33 @@ class Expedition(object):
         if result is not None:
           result_list.append(result)
     return result_list
+
+  def log_summary(self, outfile):
+    """Log accuracy metrics if we presume the model to be ground truth."""
+    with open(outfile, "w") as out:
+      for probe_type in self.n_true_positives.keys():
+        out.write("Results for probing {p}:".format(p=probe_type))
+        out.write("Total number tested: {n}".format(n=self.n_tested))
+        tp = self.n_true_positives[probe_type]
+        tn = self.n_true_negatives[probe_type]
+        fp = self.n_false_positives[probe_type]
+        fn = self.n_false_negatives[probe_type]
+        out.write("True positives: {n}".format(n=tp))
+        out.write("True negatives: {n}".format(n=tn))
+        out.write("False positives: {n}".format(n=fp))
+        out.write("False negatives: {n}".format(n=fn))
+        precision = tp/(tp+fp)
+        recall = tp/(tp+fn)
+        # just in case we've screwed up record keeping somewhere,
+        # we won't assume n_tested is correct for these calculations
+        accuracy = (tp+tn)/(tp+tn+fp+fn)
+        f1 = 2*precision*recall/(precision + recall)
+        out.write("Precision: {p}".format(p=precision))
+        out.write("Recall: {r}".format(r=recall))
+        out.write("F1-score: {f1}".format(f1=f1))
+        out.write("Overall accuracy: {a}".format(a=accuracy))
+        out.write()
+    return outfile
 
   def log_results(self, outfile):
     """Log discoveries to file. For now just simple strings."""

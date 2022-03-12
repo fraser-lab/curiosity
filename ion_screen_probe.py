@@ -184,5 +184,20 @@ class AmIAnIonML(AmIAnIon):
     else:
       choice = self.lookup[self.classifier.predict(np.asarray(density_grid).reshape(1,-1))[0]]
       print ("... probed one water at {timestr}".format(timestr=time.asctime()))
+      if not "ion" in self.expedition.n_true_positives.keys():
+        self.expedition.n_true_positives["ion"] = 0
+        self.expedition.n_true_negatives["ion"] = 0
+        self.expedition.n_false_positives["ion"] = 0
+        self.expedition.n_false_negatives["ion"] = 0
       if choice.upper() != resname.upper():
+        if resname.upper() in WATER_RES_NAMES:
+          self.expedition.n_false_positives["ion"] += 1
+        else:
+          self.expedition.n_false_negatives["ion"] += 1
         return (choice)
+      else:
+        if resname.upper() in WATER_RES_NAMES:
+          self.expedition.n_true_negatives["ion"] += 1
+        else:
+          self.expedition.n_true_positives["ion"] += 1
+        return

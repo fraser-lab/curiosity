@@ -165,8 +165,9 @@ def run(args):
   # print(curiosity_expedition.discoveries)
   log = curiosity_expedition.log_results("{model}_curiosity_results.out".format(model=params.model_file))
   print("Wrote discoveries to {log}".format(log=log))
+  summary = curiosity_expedition.log_summary("{model}_curiosity_summary.out".format(model=params.model_file))
+  print("Wrote summary to {summary}".format(summary=summary))
   # TODO: write Coot script to look through discoveries, labeled appropriately
-  # FIXME: for testing purposes, apply ALL discoveries
   # curiosity_expedition.apply_selected_discoveries(curiosity_expedition.discoveries)
   # print("Applied all discovered modifications to model.")
   # import pdb; pdb.set_trace()
