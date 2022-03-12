@@ -108,7 +108,7 @@ class AmIAnIonML(AmIAnIon):
     # - update README to make clear this needs to run with py3
     print ("... completed probe setup at {timestr}".format(timestr=time.asctime()))
 
-  def get_basis_set(self, position, radius=5):
+  def get_basis_set(self, position, radius=3):
     # x,y,z = position
     # diffx = self.waters_x - x
     # diffy = self.waters_y - y
@@ -175,8 +175,8 @@ class AmIAnIonML(AmIAnIon):
       return # not enough information
     density_grid = self.get_map_density_grid(position,
                                              basis_set,
-                                             grid_spacing=0.2,
-                                             sampling_radius=4,
+                                             grid_spacing=0.5,
+                                             sampling_radius=3,
                                              map_manager=self.map_manager)
     print("... fetched grid of map densities at {timestr}".format(timestr=time.asctime()))
     if training:
