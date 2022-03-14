@@ -202,8 +202,14 @@ class Expedition(object):
           recall = "[undefined = no true positives or false negatives identified]"
         # just in case we've screwed up record keeping somewhere,
         # we won't assume n_tested is correct for these calculations
-        accuracy = (tp+tn)/(tp+tn+fp+fn)
-        f1 = 2*precision*recall/(precision + recall)
+        try:
+          accuracy = (tp+tn)/(tp+tn+fp+fn)
+        except ZeroDivisionError:
+          accuracy = "[undefined]"
+        try:
+          f1 = 2*precision*recall/(precision + recall)
+        except TypeError:
+          f1 = "[undefined]"
         out.write("Precision: {p}\n".format(p=precision))
         out.write("Recall: {r}\n".format(r=recall))
         out.write("F1-score: {f1}\n".format(f1=f1))
