@@ -86,7 +86,8 @@ class AmIAnIonML(AmIAnIon):
     self.map_manager = self.expedition.maps[self.experiment_type]['expt']
     here = os.path.abspath(os.path.dirname(__file__))
     self.classifier = easy_pickle.load(os.path.join(here, "ml", "ion_detector.pkl"))
-    self.lookup = easy_pickle.load(os.path.join(here, "ml", "ion_lookup.pkl"))
+    tmp = easy_pickle.load(os.path.join(here, "ml", "ion_lookup.pkl"))
+    self.lookup = {tmp[key]:key for key in tmp}
     # TODO for classifier:
     # - full path to pkl
     # - bundle release 0.1 and give it a zenodo doi

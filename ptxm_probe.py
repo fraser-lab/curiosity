@@ -62,10 +62,15 @@ class IsModifiedNucleotide(Probe):
     self.classifier_U = easy_pickle.load(os.path.join(here, "ml", "modif_detector_U.pkl"))
     self.classifier_C = easy_pickle.load(os.path.join(here, "ml", "modif_detector_C.pkl"))
     self.classifier_G = easy_pickle.load(os.path.join(here, "ml", "modif_detector_G.pkl"))
-    self.lookup_A = easy_pickle.load(os.path.join(here, "ml", "lookup_A.pkl"))
-    self.lookup_U = easy_pickle.load(os.path.join(here, "ml", "lookup_U.pkl"))
-    self.lookup_C = easy_pickle.load(os.path.join(here, "ml", "lookup_C.pkl"))
-    self.lookup_G = easy_pickle.load(os.path.join(here, "ml", "lookup_G.pkl"))
+    # lookups are resname:int so we will need to reverse them each
+    tmp = easy_pickle.load(os.path.join(here, "ml", "A_lookup.pkl"))
+    self.lookup_A = {tmp[key]:key for key in tmp}
+    tmp = easy_pickle.load(os.path.join(here, "ml", "U_lookup.pkl"))
+    self.lookup_U = {tmp[key]:key for key in tmp}
+    tmp = easy_pickle.load(os.path.join(here, "ml", "C_lookup.pkl"))
+    self.lookup_C = {tmp[key]:key for key in tmp}
+    tmp = easy_pickle.load(os.path.join(here, "ml", "G_lookup.pkl"))
+    self.lookup_G = {tmp[key]:key for key in tmp}
     print ("... completed probe setup at {timestr}".format(timestr=time.asctime()))
 
   def get_type_and_origin_and_basis_set_nucleobase(self, residue, resname):
@@ -220,24 +225,24 @@ class IsModifiedNucleotide(Probe):
       density_grid = list(map_values_base) + list(map_values_sugar)
       choice = lookup[classif.predict(np.asarray(density_grid).reshape(1,-1))[0]]
       print ("... probed one water at {timestr}".format(timestr=time.asctime()))
-      if not "ptxm" in self.expedition.true_positives.keys():
-        self.expedition.true_positives["ptxm"] = 0
-        self.expedition.false_positives["ptxm"] = 0
-        self.expedition.true_negatives["ptxm"] = 0
-        self.expedition.false_negatives["ptxm"] = 0
+      if not "ptxm" in self.expedition.n_true_positives.keys():
+        self.expedition.n_true_positives["ptxm"] = 0
+        self.expedition.n_false_positives["ptxm"] = 0
+        self.expedition.n_true_negatives["ptxm"] = 0
+        self.expedition.n_false_negatives["ptxm"] = 0
       if choice.upper() != resname.upper():
         if resname.upper() in ["A", "U", "C", "G"]:
-          self.expedition.false_positives["ptxm"] += 1
+          self.expedition.n_false_positives["ptxm"] += 1
           # if the model is already correct, we've just discovered modifications that shouldn't actually be there
         else:
-          self.expedition.false_negatives["ptxm"] += 1
+          self.expedition.n_false_negatives["ptxm"] += 1
           # if the model is already correct, we've just failed to discover a modification that should be modeled
         return (choice)
       else:
         if resname.upper() in ["A", "U", "C", "G"]:
-          self.expedition.true_negatives["ptxm"] += 1
+          self.expedition.n_true_negatives["ptxm"] += 1
           # model and probe agree there should be no modification here
         else:
-          self.expedition.true_positives["ptxm"] += 1
+          self.expedition.n_true_positives["ptxm"] += 1
           # model and probe agree there should be a modification here
         return
