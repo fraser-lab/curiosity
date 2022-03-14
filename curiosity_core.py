@@ -182,27 +182,32 @@ class Expedition(object):
     """Log accuracy metrics if we presume the model to be ground truth."""
     with open(outfile, "w") as out:
       for probe_type in self.n_true_positives.keys():
-        out.write("Results for probing {p}:".format(p=probe_type))
-        out.write("Total number tested: {n}".format(n=self.n_tested))
+        out.write("Results for probing {p}:\n".format(p=probe_type))
+        out.write("Total number tested: {n}\n".format(n=self.n_tested))
         tp = self.n_true_positives[probe_type]
         tn = self.n_true_negatives[probe_type]
         fp = self.n_false_positives[probe_type]
         fn = self.n_false_negatives[probe_type]
-        out.write("True positives: {n}".format(n=tp))
-        out.write("True negatives: {n}".format(n=tn))
-        out.write("False positives: {n}".format(n=fp))
-        out.write("False negatives: {n}".format(n=fn))
-        precision = tp/(tp+fp)
-        recall = tp/(tp+fn)
+        out.write("True positives: {n}\n".format(n=tp))
+        out.write("True negatives: {n}\n".format(n=tn))
+        out.write("False positives: {n}\n".format(n=fp))
+        out.write("False negatives: {n}\n".format(n=fn))
+        try:
+          precision = tp/(tp+fp)
+        except ZeroDivisionError:
+          precision = "[undefined - no true positives or false positives identified]"
+        try:
+          recall = tp/(tp+fn)
+        except ZeroDivisionError:
+          recall = "[undefined = no true positives or false negatives identified]"
         # just in case we've screwed up record keeping somewhere,
         # we won't assume n_tested is correct for these calculations
         accuracy = (tp+tn)/(tp+tn+fp+fn)
         f1 = 2*precision*recall/(precision + recall)
-        out.write("Precision: {p}".format(p=precision))
-        out.write("Recall: {r}".format(r=recall))
-        out.write("F1-score: {f1}".format(f1=f1))
-        out.write("Overall accuracy: {a}".format(a=accuracy))
-        out.write()
+        out.write("Precision: {p}\n".format(p=precision))
+        out.write("Recall: {r}\n".format(r=recall))
+        out.write("F1-score: {f1}\n".format(f1=f1))
+        out.write("Overall accuracy: {a}\n\n".format(a=accuracy))
     return outfile
 
   def log_results(self, outfile):
