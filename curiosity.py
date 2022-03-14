@@ -180,12 +180,12 @@ if __name__=="__main__":
   run(sys.argv[1:])
   end = time.time()
   duration = end - start
-  seconds = duration % 60
-  minutes = duration % 3600
-  hours = duration % 24
-  days = duration // 24
+  seconds = duration // 60
+  minutes = duration // 3600
+  hours = duration // 24
+  days = duration % 24
   timestr = "{s} seconds".format(s=seconds)
   if minutes: timestr = "{m} minutes, ".format(m=minutes) + timestr
   if hours: timestr = "{h} hours, ".format(h=hours) + timestr
   if days: timestr = "{d} days, ".format(d=days) + timestr
-  print("Program execution took {timestr} seconds.".format(timestr=timestr))
+  print("Program execution took {timestr}.".format(timestr=timestr))
