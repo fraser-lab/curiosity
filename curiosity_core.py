@@ -187,7 +187,7 @@ class Expedition(object):
     """Log accuracy metrics if we presume the model to be ground truth."""
     with open(outfile, "w") as out:
       for probe_type in self.n_true_positives.keys():
-        out.write("Results for probing {p}:\n".format(p=probe_type))
+        out.write("Results for {p} probe:\n".format(p=probe_type))
         out.write("Total number tested: {n}\n".format(n=self.n_tested))
         tp = self.n_true_positives[probe_type]
         tn = self.n_true_negatives[probe_type]
@@ -198,27 +198,27 @@ class Expedition(object):
         out.write("False positives: {n}\n".format(n=fp))
         out.write("False negatives: {n}\n".format(n=fn))
         try:
-          precision = tp/(tp+fp)
+          precision = "{:2f}:%".format(100*tp/(tp+fp))
         except ZeroDivisionError:
           precision = "[undefined - no true positives or false positives identified]"
         try:
-          recall = tp/(tp+fn)
+          recall = "{:.2f}%".format(100*tp/(tp+fn))
         except ZeroDivisionError:
           recall = "[undefined = no true positives or false negatives identified]"
         # just in case we've screwed up record keeping somewhere,
         # we won't assume n_tested is correct for these calculations
         try:
-          accuracy = (tp+tn)/(tp+tn+fp+fn)
+          accuracy = "{:.2f}%".format(100*(tp+tn)/(tp+tn+fp+fn))
         except ZeroDivisionError:
           accuracy = "[undefined]"
         try:
-          f1 = 2*precision*recall/(precision + recall)
+          f1 = "{:.2f}%".format(100*2*precision*recall/(precision + recall))
         except TypeError:
           f1 = "[undefined]"
-        out.write("Precision: {:.2f}%\n".format(precision*100))
-        out.write("Recall: {:.2f}%\n".format(recall*100))
-        out.write("F1-score: {:.2f}\n".format(f1))
-        out.write("Overall accuracy: {:.2f}%\n\n".format(accuracy*100))
+        out.write("Precision: {p}%\n".format(precision))
+        out.write("Recall: {r}%\n".format(recall))
+        out.write("F1-score: {f1}\n".format(f1))
+        out.write("Overall accuracy: {a}%\n\n".format(accuracy))
     return outfile
 
   def log_results(self, outfile):
