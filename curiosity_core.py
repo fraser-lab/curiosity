@@ -173,7 +173,12 @@ class Expedition(object):
     result_list = []
     for probe in self.probes:
       if probe.validate_structure_type(struct_type) and probe.validate_residue_type(residue):
-        result = probe.probe_at_residue(residue, chain_id, resid, resname, struct_type)
+        try:
+          result = probe.probe_at_residue(residue, chain_id, resid, resname, struct_type)
+        except Exception as e:
+          print("Encountered exception {e}; skipping chain {ch} resi {resid} {resname}".format(
+            e=e, ch=chain_id, resid=resid, resname=resname))
+          result = None
         if result is not None:
           result_list.append(result)
     return result_list
