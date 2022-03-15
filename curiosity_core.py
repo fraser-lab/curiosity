@@ -215,10 +215,10 @@ class Expedition(object):
           f1 = 2*precision*recall/(precision + recall)
         except TypeError:
           f1 = "[undefined]"
-        out.write("Precision: {p}\n".format(p=precision))
-        out.write("Recall: {r}\n".format(r=recall))
-        out.write("F1-score: {f1}\n".format(f1=f1))
-        out.write("Overall accuracy: {a}\n\n".format(a=accuracy))
+        out.write("Precision: {:.2f}%\n".format(precision*100))
+        out.write("Recall: {:.2f}%\n".format(recall*100))
+        out.write("F1-score: {:.2f}\n".format(f1))
+        out.write("Overall accuracy: {:.2f}%\n\n".format(accuracy*100))
     return outfile
 
   def log_results(self, outfile):
