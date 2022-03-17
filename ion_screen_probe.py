@@ -82,6 +82,15 @@ class AmIAnIonML(AmIAnIon):
       # waters in order to assess precision and recall
     self.water_and_ion_names = set([item.lower() for item in self.applicable_residue_list])
 
+  def validate_expedition(self):
+    for etype in self.expedition.maps:
+      if 'expt' in self.expedition.maps[etype]:
+        # right now we just grab whatever is the first map to meet all reqs
+        self.experiment_type = etype
+        self.setup_manager()
+        return True
+    return False
+
   def setup_manager(self):
     self.map_manager = self.expedition.maps[self.experiment_type]['expt']
     here = os.path.abspath(os.path.dirname(__file__))

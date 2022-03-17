@@ -46,9 +46,8 @@ class IsModifiedNucleotide(Probe):
     self.applicable_residue_list = nucleotides #["A","U","C","G","DA","DT","DC","DG"]
 
   def validate_expedition(self):
-    for etype in self.expedition.managers:
-      if 'fmodel' in self.expedition.managers[etype] and \
-        'expt' in self.expedition.maps[etype]:
+    for etype in self.expedition.maps:
+      if 'expt' in self.expedition.maps[etype]:
         # right now we just grab whatever is the first map to meet all reqs
         self.experiment_type = etype
         self.setup_manager()

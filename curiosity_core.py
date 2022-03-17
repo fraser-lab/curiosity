@@ -1,6 +1,3 @@
-from __future__ import division
-from scitbx.array_family import flex
-# from iotbx.data_manager import DataManager
 from mmtbx.masks import manager as masks_manager
 from mmtbx.f_model import manager as fmodel_manager
 from load_probes import probe_collection
@@ -14,10 +11,8 @@ class Expedition(object):
   away such that instances of this class know how to begin a search but do not
   dictate what that entails. This class describes how to traverse the model and
   how to keep track of any discoveries."""
-  def __init__(self, map_model_manager_in, params, fmodel=None, fobs=None):
+  def __init__(self, map_model_manager_in, params):
     self.mmm = map_model_manager_in
-    # self.fobs = fobs
-    # self.fmodel = fmodel
     self.params = params
     self.discoveries = {}
     self.n_tested = 0
@@ -37,17 +32,6 @@ class Expedition(object):
     print ("... inventoried maps at {timestr}".format(timestr=time.asctime()))
     self.inventory_probes()
     print ("... inventoried probes at {timestr}".format(timestr=time.asctime()))
-    # self.setup_fmodel()
-
-  # def setup_fmodel(self):
-
-
-    # if not self.params.calculated_map_file:
-      # compute fmodel
-      # from mmtbx.utils import process_command_line_args
-      # process_command_line_args(
-      #   args=args, log=log, master_params=fmodel_from_xray_structure_master_params)
-      # fmodel_miller_arrays = processed_args.reflection_files[0].as_miller_arrays()
 
   def grid_atoms(self):
     """Prepare an accessor for model atoms by position -- this will allow us to avoid
@@ -198,7 +182,7 @@ class Expedition(object):
         out.write("False positives: {n}\n".format(n=fp))
         out.write("False negatives: {n}\n".format(n=fn))
         try:
-          precision = "{:2f}:%".format(100*tp/(tp+fp))
+          precision = "{:.2f}%".format(100*tp/(tp+fp))
         except ZeroDivisionError:
           precision = "[undefined - no true positives or false positives identified]"
         try:
@@ -212,13 +196,13 @@ class Expedition(object):
         except ZeroDivisionError:
           accuracy = "[undefined]"
         try:
-          f1 = "{:.2f}%".format(100*2*precision*recall/(precision + recall))
-        except TypeError:
+          f1 = "{:.2f}%".format(100*2*(tp/(tp+fp))*(tp/(tp+fn))/((tp/(tp+fp)) + (tp/(tp+fn))))
+        except ZeroDivisionError:
           f1 = "[undefined]"
-        out.write("Precision: {p}%\n".format(precision))
-        out.write("Recall: {r}%\n".format(recall))
-        out.write("F1-score: {f1}\n".format(f1))
-        out.write("Overall accuracy: {a}%\n\n".format(accuracy))
+        out.write("Precision: {p}\n".format(p=precision))
+        out.write("Recall: {r}\n".format(r=recall))
+        out.write("F1-score: {f1}\n".format(f1=f1))
+        out.write("Overall accuracy: {a}\n\n".format(a=accuracy))
     return outfile
 
   def log_results(self, outfile):
