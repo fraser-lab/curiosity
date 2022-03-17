@@ -4,7 +4,6 @@ probe_collection = []
 # probe_collection.append(CompareDENQDensities)
 
 from ion_screen_probe import AmIAnIonML
-# not used: AmIAnIon (original), runs VERY SLOWLY on larger models
 probe_collection.append(AmIAnIonML)
 
 from ptxm_probe import IsModifiedNucleotide

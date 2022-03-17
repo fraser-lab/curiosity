@@ -7,63 +7,7 @@ import numpy as np
 import time
 import os
 
-class AmIAnIon(Probe):
-  """Determine if a water might be better modeled as an ion. Initialize once per
-  model only, so we can do some preliminary work outside the probe method."""
-  def __init__(self, expedition):
-    self.expedition = expedition
-    self.experiment_type = None
-    self.applicable_structure_types = None # allow all
-    self.applicable_residue_list = ["HOH","WAT","OH","DOD","D3O"]
-
-  def validate_expedition(self):
-    for etype in self.expedition.managers:
-      if 'fmodel' in self.expedition.managers[etype] and \
-        'expt' in self.expedition.maps[etype]:
-        # right now we just grab whatever is the first map to meet all reqs
-        self.experiment_type = etype
-        self.setup_manager()
-        return True
-    return False
-
-  def setup_manager(self):
-    from mmtbx.ions.identify import create_manager, ion_identification_phil_str
-    geometry_manager = self.expedition.model.get_restraints_manager().geometry
-    params = parse(ion_identification_phil_str, process_includes=True).extract()
-    self.manager = create_manager(self.expedition.hier,
-                                  geometry_manager,
-                                  self.expedition.managers[self.experiment_type]['fmodel'],
-                                  wavelength=0,
-                                  params=params)
-    print ("... completed probe setup at {timestr}".format(timestr=time.asctime()))
-
-  def probe_at_residue(self, residue, chain_id, resid, resname, struct_type):
-    from mmtbx.ions.identify import AtomProperties
-    atoms = [atom for atom in residue.atoms() if atom.name.strip() == "O"]
-    if not len(atoms) == 1:
-      print ("too many atoms in candidate water")
-      return
-    if not resname in WATER_RES_NAMES:
-      print("{resname} does not appear to be a water".format(
-        resname=resname))
-      return
-    waters = self.manager.water_selection()
-    self.manager.atoms_to_props = dict((i_seq, AtomProperties(i_seq, self.manager)) for i_seq in waters)
-    water_result = self.manager.analyze_water(atoms[0].i_seq)
-    print ("... completed analysis of one water molecule at {timestr}".format(timestr=time.asctime()))
-    if water_result:
-      accepted = water_result.matching_candidates
-      try:
-        accepted = [a[0].element for a in accepted]
-        print("accepted ions are logged as tuples") # FIXME
-      except TypeError:
-        accepted = [a.element for a in accepted]
-        print("accepted ions are logged as objects") # FIXME
-      rejected = [r[0].element for r in water_result.rejected_candidates]
-      return ("ions accepted", accepted, "ions rejected", rejected)
-    return
-
-class AmIAnIonML(AmIAnIon):
+class AmIAnIonML(Probe):
   """Probe derived from Am I an Ion class for purposes of validation, but functioning
   completely differently. We'll locate nearest two neighbors to define a coordinate system
   against which to normalize. (Reject if there aren't at least two atoms within 5 Ang.)
