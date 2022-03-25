@@ -93,18 +93,20 @@ class AmIAnIonML(Probe):
     print("... determined orientation-normalized basis set at {timestr}".format(timestr=time.asctime()))
     if basis_set is None:
       return # not enough information
-    density_grid = self.get_map_density_grid(position,
-                                             basis_set,
-                                             grid_spacing=0.5,
-                                             sampling_radius=3,
-                                             map_manager=self.map_manager)
+    density_grid = list(self.get_map_density_grid(position,
+                                                  basis_set,
+                                                  grid_spacing=0.5,
+                                                  sampling_radius=3,
+                                                  map_manager=self.map_manager))
+    density_scale_factor = 1/(sum(density_grid)/len(density_grid))
+    density_grid_normalized = [d*density_scale_factor for d in density_grid]
     print("... fetched grid of map densities at {timestr}".format(timestr=time.asctime()))
     if training:
-      printable = map(str, list(density_grid))
+      printable = map(str, density_grid_normalized)
       print ("... probed one water at {timestr}".format(timestr=time.asctime()))
       return ("density grid at water: " + " ".join(printable) + "\n")
     else:
-      choice = self.lookup[self.classifier.predict(np.asarray(density_grid).reshape(1,-1))[0]]
+      choice = self.lookup[self.classifier.predict(np.asarray(density_grid_normalized).reshape(1,-1))[0]]
       print ("... probed one water at {timestr}".format(timestr=time.asctime()))
       if not "ion" in self.expedition.n_true_positives.keys():
         self.expedition.n_true_positives["ion"] = 0

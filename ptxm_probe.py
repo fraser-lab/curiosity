@@ -201,8 +201,11 @@ class IsModifiedNucleotide(Probe):
     map_values_base = self.get_map_density_grid(base_origin, base_basis_set, base_type)
     map_values_sugar = self.get_map_density_grid(sugar_origin, sugar_basis_set, "sugar")
     print("... fetched grid of map densities at {timestr}".format(timestr=time.asctime()))
+    density_grid = list(map_values_base) + list(map_values_sugar)
+    density_scale_factor = 1/(sum(density_grid)/len(density_grid))
+    density_grid_normalized = [d*density_scale_factor for d in density_grid]
     if training:
-      printable = map(str, list(map_values_base) + list(map_values_sugar))
+      printable = map(str, density_grid_normalized)
       print ("... probed one nucleotide at {timestr}".format(timestr=time.asctime()))
       return ("density grid at nucleotide: " + " ".join(printable) + "\n")
     else:
@@ -221,8 +224,7 @@ class IsModifiedNucleotide(Probe):
       else:
         print ("we don't have a classifier for this nucleotide yet")
         return
-      density_grid = list(map_values_base) + list(map_values_sugar)
-      choice = lookup[classif.predict(np.asarray(density_grid).reshape(1,-1))[0]]
+      choice = lookup[classif.predict(np.asarray(density_grid_normalized).reshape(1,-1))[0]]
       print ("... probed one water at {timestr}".format(timestr=time.asctime()))
       if not "ptxm" in self.expedition.n_true_positives.keys():
         self.expedition.n_true_positives["ptxm"] = 0
