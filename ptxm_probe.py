@@ -57,10 +57,10 @@ class IsModifiedNucleotide(Probe):
   def setup_manager(self):
     self.map_manager = self.expedition.maps[self.experiment_type]['expt']
     here = os.path.abspath(os.path.dirname(__file__))
-    self.classifier_A = easy_pickle.load(os.path.join(here, "ml", "modif_detector_A.pkl"))
-    self.classifier_U = easy_pickle.load(os.path.join(here, "ml", "modif_detector_U.pkl"))
-    self.classifier_C = easy_pickle.load(os.path.join(here, "ml", "modif_detector_C.pkl"))
-    self.classifier_G = easy_pickle.load(os.path.join(here, "ml", "modif_detector_G.pkl"))
+    self.classifier_A = easy_pickle.load(os.path.join(here, "ml", "modif_detector_A_tuned.pkl"))
+    self.classifier_U = easy_pickle.load(os.path.join(here, "ml", "modif_detector_U_tuned.pkl"))
+    self.classifier_C = easy_pickle.load(os.path.join(here, "ml", "modif_detector_C_tuned.pkl"))
+    self.classifier_G = easy_pickle.load(os.path.join(here, "ml", "modif_detector_G_tuned.pkl"))
     # lookups are resname:int so we will need to reverse them each
     tmp = easy_pickle.load(os.path.join(here, "ml", "A_lookup.pkl"))
     self.lookup_A = {tmp[key]:key for key in tmp}
