@@ -1,8 +1,5 @@
 probe_collection = []
 
-# from compare_DENQ_probe import CompareDENQDensities
-# probe_collection.append(CompareDENQDensities)
-
 from ion_screen_probe import AmIAnIonML
 probe_collection.append(AmIAnIonML)
 
